@@ -1,0 +1,6 @@
+{
+  "name": "Fillory Nielsen",
+  "description": "An ultra-premium dark fantasy mobile application for photo and video storage, designed like a magical royal archive.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

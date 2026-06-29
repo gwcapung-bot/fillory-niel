@@ -1,0 +1,56 @@
+{
+  "collections": {
+    "memories": {
+      "fields": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "type": { "type": "string" },
+        "url": { "type": "string" },
+        "thumbnailUrl": { "type": "string" },
+        "chapter": { "type": "string" },
+        "date": { "type": "string" },
+        "description": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "constellationPos": {
+          "type": "map",
+          "fields": {
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          }
+        },
+        "userId": { "type": "string" },
+        "createdAt": { "type": "timestamp" }
+      }
+    },
+    "configs": {
+      "fields": {
+        "id": { "type": "string" },
+        "landingHeading": { "type": "string" },
+        "landingSub": { "type": "string" },
+        "userId": { "type": "string" }
+      }
+    },
+    "profiles": {
+      "fields": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "councilTitle": { "type": "string" },
+        "realmDominion": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "userId": { "type": "string" }
+      }
+    },
+    "members": {
+      "fields": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "privateVault": { "type": "boolean" },
+        "permissionLevel": { "type": "string" },
+        "userId": { "type": "string" }
+      }
+    }
+  }
+}
