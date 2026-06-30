@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, Play, Shield, ChevronRight, EyeOff, Edit3, LogIn } from 'lucide-react';
+import { Sparkles, Play, Shield, ChevronRight, EyeOff, Edit3, LogIn, X } from 'lucide-react';
 import { MemoryItem } from '../types';
-import { auth } from '../firebase'; 
-import { signInWithRedirect, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithGoogle, logoutWithGoogle } from '../firebase'; // Memanggil fungsi popup dari firebase.ts kamu!
 
 interface LandingPageProps {
   onEnterVault: () => void;
@@ -74,15 +73,13 @@ export default function LandingPage({
   const handleGoogleSignIn = async () => {
     setIsSigningIn(true);
     try {
-      const provider = new GoogleAuthProvider();
-      await signInWithRedirect(auth, provider);
+      // Menjalankan fungsi Popup bawaan firebase.ts kamu yang asli
+      await signInWithGoogle();
+      onEnterVault();
     } catch (error) {
-      console.warn("Mantra Google tertahan Starter Tier, mengaktifkan gerbang bypass...", error);
+      console.error("Gagal menembus gerbang Google Popup:", error);
     } finally {
-      setTimeout(() => {
-        setIsSigningIn(false);
-        onEnterVault();
-      }, 1000);
+      setIsSigningIn(false);
     }
   };
 
@@ -124,7 +121,7 @@ export default function LandingPage({
   return (
     <div className="relative min-h-screen flex flex-col justify-between items-center px-6 py-8 overflow-hidden bg-[#050605]" id="landing-page">
       {onLogout && (
-        <button onClick={onLogout} className="absolute top-4 right-4 z-20 flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full border border-red-900/30 bg-[#050605]/80 text-red-400 text-[10px] uppercase tracking-widest cursor-pointer hover:bg-red-950/20 transition-all font-sans">
+        <button onClick={async () => { await logoutWithGoogle(); if(onLogout) onLogout(); }} className="absolute top-4 right-4 z-20 flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full border border-red-900/30 bg-[#050605]/80 text-red-400 text-[10px] uppercase tracking-widest cursor-pointer hover:bg-red-950/20 transition-all font-sans">
           <LogIn className="w-3.5 h-3.5 rotate-180" />
           <span>Lock Gates</span>
         </button>
@@ -176,7 +173,7 @@ export default function LandingPage({
         <p className="font-serif italic text-base text-[#E9DFC8]/80 max-w-lg">
           {landingSub || '“Every Memory Has A Story Worth Preserving.”'}
         </p>
-        <button onClick={() => setIsEditOpen(true)} className="mt-3 flex items-center space-x-1.5 px-3 py-1 rounded border border-[#C7A86D]/20 text-[#C7A86D] text-[9px] uppercase tracking-widest hover:border-[#C7A86D]/45 transition-all">
+        <button onClick={() => setIsEditOpen(true)} className="mt-3 flex items-center space-x-1.5 px-3 py-1 rounded border border-[#C7A86D]/20 text-[#C7A86D] text-[9px] uppercase tracking-widest hover:border-[#C7A86D]/45 transition-all cursor-pointer">
           <Edit3 className="w-3 h-3" />
           <span>Ubah Tulisan Gerbang</span>
         </button>
@@ -186,7 +183,7 @@ export default function LandingPage({
       <motion.div 
         animate={pulseActive ? { scale: [1, 1.02, 1] } : {}}
         transition={{ duration: 2 }}
-        className="relative z-10 w-full max-w-md space-y-6 text-center flex flex-col items-center animate-pulse-slow"
+        className="relative z-10 w-full max-w-md space-y-6 text-center flex flex-col items-center"
       >
         <div className="w-full flex flex-col items-center space-y-2 pb-4">
           <motion.button
@@ -203,14 +200,14 @@ export default function LandingPage({
           
           <button 
             onClick={handleWatchLegend}
-            className="text-[10px] text-[#9E9E8E] hover:text-[#C7A86D] transition-all font-sans tracking-widest flex items-center gap-1 mt-2 border border-transparent hover:border-[#C7A86D]/20 px-3 py-1 rounded-full"
+            className="text-[10px] text-[#9E9E8E] hover:text-[#C7A86D] transition-all font-sans tracking-widest flex items-center gap-1 mt-2 border border-transparent hover:border-[#C7A86D]/20 px-3 py-1 rounded-full cursor-pointer"
           >
             <Play className="w-2.5 h-2.5" /> LIHAT LEGENDA KASTIL
           </button>
         </div>
 
         <div className="flex gap-4 justify-center items-center w-full">
-          <motion.button onClick={onEnterVault} className="px-8 py-3.5 rounded-full border border-[#C7A86D] text-[11px] uppercase text-[#111512] bg-gradient-to-r from-[#D7BB7A] to-[#C7A86D] flex items-center space-x-2">
+          <motion.button onClick={onEnterVault} className="px-8 py-3.5 rounded-full border border-[#C7A86D] text-[11px] uppercase text-[#111512] bg-gradient-to-r from-[#D7BB7A] to-[#C7A86D] flex items-center space-x-2 cursor-pointer">
             <span>Sowan Ke Dalam Vault</span>
             <ChevronRight className="w-4 h-4" />
           </motion.button>
@@ -227,7 +224,7 @@ export default function LandingPage({
                   <Shield className="w-4 h-4" />
                   <span className="font-sans text-xs uppercase tracking-widest font-bold">Gulungan Kitab Kuno</span>
                 </div>
-                <button onClick={() => setLegendOpen(false)} className="text-[#9E9E8E] hover:text-[#C7A86D] transition-all"><X className="w-4 h-4" /></button>
+                <button onClick={() => setLegendOpen(false)} className="text-[#9E9E8E] hover:text-[#C7A86D] transition-all cursor-pointer"><X className="w-4 h-4" /></button>
               </div>
 
               {loadingLegend ? (
@@ -237,7 +234,7 @@ export default function LandingPage({
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <p className="whitespace-pre-line select-none">{legendText}</p>
+                  <p className="whitespace-pre-line">{legendText}</p>
                   {!onlineMode && (
                     <div className="flex items-center justify-center space-x-2 text-[10px] font-sans text-[#C7A86D] bg-[#C7A86D]/5 py-2 rounded border border-[#C7A86D]/10">
                       <EyeOff className="w-3 h-3" />
@@ -248,7 +245,7 @@ export default function LandingPage({
               )}
 
               <div className="pt-2 border-t border-[#C7A86D]/10 flex justify-end">
-                <button onClick={() => setLegendOpen(false)} className="mx-auto px-6 py-2 border border-[#C7A86D]/30 text-[10px] uppercase font-sans tracking-widest hover:bg-[#C7A86D]/5 text-[#C7A86D] rounded transition-all">Tutup Gulungan</button>
+                <button onClick={() => setLegendOpen(false)} className="mx-auto px-6 py-2 border border-[#C7A86D]/30 text-[10px] uppercase font-sans tracking-widest hover:bg-[#C7A86D]/5 text-[#C7A86D] rounded transition-all cursor-pointer">Tutup Gulungan</button>
               </div>
             </motion.div>
           </div>
@@ -265,7 +262,7 @@ export default function LandingPage({
                 <input type="text" value={subInput} onChange={(e) => setSubInput(e.target.value)} className="w-full bg-[#050605]/60 border border-[#C7A86D]/30 text-[#E9DFC8] p-2 rounded" />
                 <div className="flex justify-end gap-3">
                   <button type="button" onClick={() => setIsEditOpen(false)} className="text-[#9E9E8E]">Batal</button>
-                  <button type="submit" disabled={isSavingText} className="bg-[#C7A86D] text-[#111512] px-4 py-2 rounded-full">
+                  <button type="submit" disabled={isSavingText} className="bg-[#C7A86D] text-[#111512] px-4 py-2 rounded-full cursor-pointer">
                     {isSavingText ? 'Menyimpan...' : 'Simpan'}
                   </button>
                 </div>
